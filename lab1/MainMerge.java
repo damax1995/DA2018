@@ -1,6 +1,11 @@
+
 import com.sun.tools.javac.Main;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainMerge {
 
@@ -8,7 +13,7 @@ public class MainMerge {
     private static MainMerge myMainMerge = new MainMerge();
 
     private MainMerge(){
-        lista.add(34);
+        /*lista.add(34);
         lista.add(27);
         lista.add(53);
         lista.add(18);
@@ -19,7 +24,7 @@ public class MainMerge {
         lista.add(21);
         lista.add(45);
         lista.add(1);
-        lista.add(23);
+        lista.add(23);*/
     }
 
     public static MainMerge getMyMainMerge(){
@@ -89,9 +94,28 @@ public class MainMerge {
         }
     }
 
+    public void readFile() throws FileNotFoundException {
+        String[] auxS = null;
+        File f = new File("numbers.txt");
+        List<String> lines = new BufferedReader(new FileReader(f)).lines().collect(Collectors.toList());
+
+        for(String line : lines){
+            auxS = line.split(",");
+        }
+
+        for(String s : auxS){
+            lista.add(Integer.parseInt(s));
+        }
+
+    }
     public static void main(String[] args){
-        MainMerge.getMyMainMerge().ordenarLista();
-        MainMerge.getMyMainMerge().printLista();
+        try {
+            MainMerge.getMyMainMerge().readFile();
+            MainMerge.getMyMainMerge().ordenarLista();
+            MainMerge.getMyMainMerge().printLista();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
