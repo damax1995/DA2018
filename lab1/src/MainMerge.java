@@ -50,10 +50,10 @@ public class MainMerge {
 
     private void mezcla(ArrayList<Integer> l, int inicio, int medio, int fin){
         int[] auxL = new int[l.size()];
-        int izq = inicio;
-        int der = medio+1;
+        int izq = inicio; //izq no podra pasar de medio
+        int der = medio+1; //der no podra pasar del limite
         int k = 0;
-
+                            //Tenemos el array dividido en 2, con un indicador en el principio de cada mitad.
         while(izq<=medio && der<=fin){      //Aquí comparamos cual de los dos numeros es menor, y lo colocamos en la lista auxiliar.
             if(l.get(izq) < l.get(der)){
                 auxL[k] = l.get(izq);
