@@ -1,5 +1,5 @@
 
-import com.sun.tools.javac.Main;
+//import com.sun.tools.javac.Main;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -95,12 +95,13 @@ public class MainMerge {
     }
 
     public void readFile() throws FileNotFoundException {
-        String[] auxS = null;
+        //String[] auxS = null;
+        ArrayList<String> auxS = new ArrayList<>();
         File f = new File("numbers.txt");
         List<String> lines = new BufferedReader(new FileReader(f)).lines().collect(Collectors.toList());
 
         for(String line : lines){
-            auxS = line.split(",");
+            auxS.add(line);
         }
 
         for(String s : auxS){
@@ -108,11 +109,38 @@ public class MainMerge {
         }
 
     }
+
+    public void writeFile(){
+        BufferedWriter writer = null;
+        try {
+            //create a temporary file
+            File logFile = new File("output.txt");
+
+            // This will output the full path where the file will be written to...
+            System.out.println("TU FICHERO OUTPUT.TXT ESTARÁ EN: "+logFile.getCanonicalPath());
+
+            writer = new BufferedWriter(new FileWriter(logFile));
+            for(int i : lista){
+                writer.write(i+"\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Close the writer regardless of what happens...
+                writer.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
     public static void main(String[] args){
         try {
+            TxtGenerator.getMyTxtGen().generarTxt();
             MainMerge.getMyMainMerge().readFile();
             MainMerge.getMyMainMerge().ordenarLista();
-            MainMerge.getMyMainMerge().printLista();
+            //MainMerge.getMyMainMerge().printLista();
+            MainMerge.getMyMainMerge().writeFile();
         } catch (IOException e) {
             e.printStackTrace();
         }

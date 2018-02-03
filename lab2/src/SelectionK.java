@@ -19,7 +19,19 @@ public class SelectionK {
         lista.add(21);
         lista.add(45);
         lista.add(1);
-        lista.add(23);
+        lista.add(132);
+        lista.add(96);
+        lista.add(81);
+        lista.add(41);
+        lista.add(59);
+        lista.add(71);
+        lista.add(33);
+        lista.add(62);
+        lista.add(97);
+        lista.add(48);
+        lista.add(102);
+        lista.add(31);
+        lista.add(64);
     }
 
     public static SelectionK getMySelectionK() {
@@ -73,7 +85,7 @@ public class SelectionK {
     }
 
     public static void main(String[] args){
-        System.out.println("El elemento en esa posicion es: "+SelectionK.getMySelectionK().seleccionar(0, 10, 6));
+        System.out.println("El elemento en esa posicion es: "+SelectionK.getMySelectionK().seleccionar(0, 23, 6));
     }
 
 }
