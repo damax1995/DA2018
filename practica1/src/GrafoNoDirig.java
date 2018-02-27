@@ -29,8 +29,7 @@ public class GrafoNoDirig {
             String s = auxL[i];
             Integer nodoX = Integer.parseInt(s.split(",")[0])-1;
             Integer nodoY = Integer.parseInt(s.split(",")[1])-1;
-            System.out.println("Nodo x: "+nodoX);
-            System.out.println("Nodo y: "+nodoY+"\n");
+
             listaAdy[nodoX].add(nodoY);
             listaAdy[nodoY].add(nodoX);
             i++;
@@ -38,9 +37,9 @@ public class GrafoNoDirig {
     }
 
     public void printGrafo(){
-        int k = 1;
+        int k = 0;
         for(LinkedList<Integer> l : listaAdy){
-            System.out.println("\n\n[*]Vecinos del nodo "+k+":\n");
+            System.out.println("\n[*]Vecinos del nodo "+k+":");
             for(Integer i : l){
                 System.out.print(i+" | ");
             }
