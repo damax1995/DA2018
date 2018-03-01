@@ -16,7 +16,8 @@ public class GrafoDirigPes {
         int k = 0;
         String[] auxL = GestorFichero.getMyGestorFichero().getContenidoTxt();
 
-        listaAdy = new LinkedList[Integer.parseInt(auxL[0])];
+        //listaAdy = new LinkedList[Integer.parseInt(auxL[0])];
+        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length];
         n = listaAdy.length;
         a = Integer.parseInt(auxL[1]);
 
@@ -27,9 +28,9 @@ public class GrafoDirigPes {
 
         while(i<auxL.length){
             String s = auxL[i];
-            Integer nodoX = Integer.parseInt(s.split(",")[0])-1;
-            Integer nodoY = Integer.parseInt(s.split(",")[1])-1;
-            float p = Integer.parseInt(s.split(",")[2]);
+            Integer nodoX = Integer.parseInt(s.split(" ")[0]);
+            Integer nodoY = Integer.parseInt(s.split(" ")[1]);
+            float p = Integer.parseInt(s.split(" ")[2]);
 
             Nodo nx = new Nodo(nodoY, p);
             listaAdy[nodoX].add(nx);
@@ -40,9 +41,11 @@ public class GrafoDirigPes {
     public void printGrafo(){
         int k = 0;
         for(LinkedList<Nodo> l : listaAdy){
-            System.out.println("\n[*]Vecinos del nodo "+k+":");
-            for(Nodo n : l){
-                System.out.print("v: "+n.getValor()+", p: "+n.getPeso()+" | ");
+            if(l.size()>0) {
+                System.out.println("\n[*]Vecinos del nodo " + k + ":");
+                for (Nodo n : l) {
+                    System.out.print("v: " + n.getValor() + ", p: " + n.getPeso() + " | ");
+                }
             }
             k++;
         }
