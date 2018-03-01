@@ -23,6 +23,7 @@ public class GrafoDirigPes {
 
         while(k<n){ //Inicializamos todas las LinkedLists
             listaAdy[k] = new LinkedList<>();
+            listaAdy[k].addFirst(new Nodo(k));
             k++;
         }
 
@@ -38,10 +39,53 @@ public class GrafoDirigPes {
         }
     }
 
+    public void resetVisitadoCiclos(){
+        for(LinkedList<Nodo> l : listaAdy){
+            if(l.size() > 1){
+                for(Nodo n : l){
+                    n.setNoVisitado();
+                }
+            }
+        }
+    }
+
+    public boolean tieneCicloD(){
+        boolean res = false;
+
+        for(LinkedList<Nodo> l : listaAdy){
+            if(!res) {
+                if (l.size() > 1) {
+                    System.out.println("[*]mandamos para el ciclo el nodo: " + l.getFirst().getValor());
+                    res = profundidadCicloDirig(l.getFirst(), l.getFirst().getValor());
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public boolean profundidadCicloDirig(Nodo nodo, int elem){
+        boolean res = false;
+        nodo.setVisitado();
+
+        for(Nodo n : listaAdy[nodo.getValor()]){
+            if(n != listaAdy[nodo.getValor()].getFirst() && !n.visitado() && !res) {
+                System.out.println("\tcomprobamos nodo: "+n.getValor()+". Y ciclo con: "+elem);
+                if (n.getValor() == elem) {
+                    res = true;
+                } else {
+                    res = profundidadCicloDirig(n, elem);
+                }
+            }
+        }
+        resetVisitadoCiclos();
+        return res;
+    }
+
     public void printGrafo(){
         int k = 0;
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size()>0) {
+            if(l.size()>1) {
                 System.out.println("\n[*]Vecinos del nodo " + k + ":");
                 for (Nodo n : l) {
                     System.out.print("v: " + n.getValor() + ", p: " + n.getPeso() + " | ");
@@ -49,6 +93,7 @@ public class GrafoDirigPes {
             }
             k++;
         }
+        System.out.println();
     }
 
 }

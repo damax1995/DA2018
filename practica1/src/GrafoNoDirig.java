@@ -2,7 +2,7 @@ import java.util.LinkedList;
 
 public class GrafoNoDirig {
 
-    private LinkedList<Integer>[] listaAdy; //lista de adyacencia
+    private LinkedList<Nodo>[] listaAdy; //lista de adyacencia
     private int n; //número de nodos
     private int a; //número de aristas
 
@@ -23,6 +23,7 @@ public class GrafoNoDirig {
 
         while(k<n){ //Inicializamos todas las LinkedLists
             listaAdy[k] = new LinkedList<>();
+            listaAdy[k].addFirst(new Nodo(k));
             k++;
         }
 
@@ -31,19 +32,68 @@ public class GrafoNoDirig {
             Integer nodoX = Integer.parseInt(s.split(" ")[0]);
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
 
-            listaAdy[nodoX].add(nodoY);
-            listaAdy[nodoY].add(nodoX);
+            Nodo nx = new Nodo(nodoY);
+            Nodo ny = new Nodo(nodoX);
+
+            listaAdy[nodoX].add(nx);
+            listaAdy[nodoY].add(ny);
             i++;
         }
     }
 
+    public void resetVisitadoCiclos(){
+        for(LinkedList<Nodo> l : listaAdy){
+            if(l.size() > 1){
+                for(Nodo n : l){
+                    n.setNoVisitado();
+                }
+            }
+        }
+    }
+
+    public boolean tieneCicloND(){
+        boolean res = false;
+        boolean primera = true;
+
+        for(LinkedList<Nodo> l : listaAdy){
+            if(!res) {
+                if (l.size() > 1) {
+                    System.out.println("[*]mandamos para el ciclo el nodo: " + l.getFirst().getValor());
+                    res = profundidadCicloNoDirig(l.getFirst(), l.getFirst().getValor(), primera, -1);
+                }
+            }
+        }
+        System.out.println();
+        return res;
+    }
+
+    public boolean profundidadCicloNoDirig(Nodo nodo, int elem, boolean primera, int padre){
+        boolean res = false;
+        nodo.setVisitado();
+
+        for(Nodo n : listaAdy[nodo.getValor()]){
+            if(listaAdy[nodo.getValor()].size() > 2) {
+                if (n.getValor() != listaAdy[nodo.getValor()].getFirst().getValor() && n.getValor() != padre && !n.visitado() && !res) {
+                    System.out.println("\tcomprobamos nodo: " + n.getValor() + ". Y ciclo con: " + elem);
+                    if (n.getValor() == elem) {
+                        res = true;
+                    } else {
+                        res = profundidadCicloNoDirig(n, elem, false, nodo.getValor());
+                    }
+                }
+            }
+        }
+        resetVisitadoCiclos();
+        return res;
+    }
+
     public void printGrafo(){
         int k = 0;
-        for(LinkedList<Integer> l : listaAdy){
-            if(l.size()>0) {
+        for(LinkedList<Nodo> l : listaAdy){
+            if(l.size()>1) {
                 System.out.println("\n[*]Vecinos del nodo " + k + ":");
-                for (Integer n : l) {
-                    System.out.print(n + " | ");
+                for (Nodo n : l) {
+                    System.out.print(n.getValor() + " | ");
                 }
             }
             k++;

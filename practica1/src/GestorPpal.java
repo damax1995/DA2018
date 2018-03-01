@@ -55,5 +55,21 @@ public class GestorPpal {
         System.out.println("\n\t\t** CREACION DE GRAFO DIRIGIDO CON PESOS **");
         GestorPpal.getMyGestorPpal().getgDP().crearGrafo();
         GestorPpal.getMyGestorPpal().getgDP().printGrafo();
+
+        System.out.println("\n\t\t** COMPROBAMOS SI TIENE CICLOS EL GD.... **");
+        if(GestorPpal.getMyGestorPpal().getgD().tieneCicloD()){
+            System.out.println("\tSi tiene cliclos.\n");
+        }
+        else{
+            System.out.println("\tNo tiene ciclos.\n");
+        }
+
+        System.out.println("\n\t\t** COMPROBAMOS SI TIENE CICLOS EL GND.... **");
+        if(GestorPpal.getMyGestorPpal().getgND().tieneCicloND()){
+            System.out.println("\tSi tiene cliclos.");
+        }
+        else{
+            System.out.println("\tNo tiene ciclos.");
+        }
     }
 }
