@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class GestorPpal {
 
@@ -7,6 +8,7 @@ public class GestorPpal {
     private static GrafoNoDirig gND;
     private static GrafoDirigPes gDP;
     private static GrafoNoDirigPes gNDP;
+    private ArrayList<Nodo> listaNodos;
 
     private GestorPpal(){
         gD = new GrafoDirig();
@@ -38,10 +40,19 @@ public class GestorPpal {
         return gND;
     }
 
+    public void rellenarListaNodos(){
+        listaNodos = getgND().getListaNodos();
+    }
+
+    public ArrayList<Nodo> getListaNodos(){
+        return listaNodos;
+    }
+
     public static void main(String[] args) throws FileNotFoundException {
         GestorFichero.getMyGestorFichero().readFile();
         System.out.println("\t\t** CREACION DE GRAFO NO DIRIGIDO **");
         GestorPpal.getMyGestorPpal().getgND().crearGrafo();
+        GestorPpal.getMyGestorPpal().rellenarListaNodos();
         GestorPpal.getMyGestorPpal().getgND().printGrafo();
 
         System.out.println("\n\t\t** CREACION DE GRAFO DIRIGIDO **");
@@ -70,6 +81,11 @@ public class GestorPpal {
         }
         else{
             System.out.println("\tNo tiene ciclos.");
+        }
+
+        System.out.println("\n\t\t** REALIZAREMOS EL ORDEN TOPOLOGICO DEL GRAFO DIRIGIDO **");
+        for(int i : GestorPpal.getMyGestorPpal().getgD().ordenTopologico()){
+            System.out.println("\t"+i);
         }
     }
 }

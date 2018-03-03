@@ -37,7 +37,7 @@ public class GestorFichero {
 
         int opc = scan.nextInt();
         if(opc == 1){
-            f = new File("txtGrafo.txt");
+            f = new File("topo.txt");
         }else if(opc == 2){
             f = new File("7n21a.txt");
         }

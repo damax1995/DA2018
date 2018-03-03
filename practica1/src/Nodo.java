@@ -3,11 +3,11 @@ public class Nodo {
     private int valor;
     private float peso;
     private Nodo next;
-    private boolean visitadoCiclo;
+    private boolean visitado;
 
     public Nodo(int v){
         valor = v;
-        visitadoCiclo = false;
+        visitado = false;
     }
 
     public Nodo(int v, float p){
@@ -32,15 +32,15 @@ public class Nodo {
     }
 
     public boolean visitado(){
-        return visitadoCiclo;
+        return visitado;
     }
 
     public void setVisitado(){
-        visitadoCiclo = true;
+        visitado = true;
     }
 
     public void setNoVisitado(){
-        visitadoCiclo = false;
+        visitado = false;
     }
 
     public void setNext(Nodo n){
