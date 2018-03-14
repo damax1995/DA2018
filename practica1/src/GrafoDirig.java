@@ -9,7 +9,7 @@ public class GrafoDirig {
     private LinkedList<Nodo>[] listaAdy; //lista de adyacencia
     private int numNodos; //número de nodos
     private int a; //número de aristas
-    int pos = Integer.parseInt(GestorFichero.getMyGestorFichero().getContenidoTxt()[0]);
+    int pos = Integer.parseInt(GestorFichero.getMyGestorFichero().getContenidoTxt()[0]); //sera el indice utilizado para el orden topologico
 
     public GrafoDirig(){
         numNodos = 0;

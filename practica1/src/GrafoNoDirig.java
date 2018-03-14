@@ -5,7 +5,6 @@ public class GrafoNoDirig {
 
     private LinkedList<Nodo>[] listaAdy; //lista de adyacencia
     private int n; //número de nodos
-    private int numNodos;
     private int a; //número de aristas
 
     public GrafoNoDirig(){
@@ -21,7 +20,6 @@ public class GrafoNoDirig {
         //listaAdy = new LinkedList[Integer.parseInt(auxL[0])+1];
         listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length];
         n = GestorFichero.getMyGestorFichero().getContenidoTxt().length;
-        numNodos = Integer.parseInt(GestorFichero.getMyGestorFichero().getContenidoTxt()[0]);
         a = Integer.parseInt(auxL[1]);
 
         while(k<n){ //Inicializamos todas las LinkedLists
@@ -92,14 +90,12 @@ public class GrafoNoDirig {
      public ArrayList<Nodo> getListaNodos(){
         ArrayList<Nodo> lista = new ArrayList<>();
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size()>1 && l != null){ //Si hay algun elemento mas a parte de el mismo, pertenece al grafo,
-                            //si solo esta el propio nodo en su lista, quiere decir que ese valor no corresponde a ningun nodo
+            if(l.size()>1 && l != null){ //Si hay algun elemento mas a parte de él mismo, pertenece al grafo,
+                            //si solo esta el propio nodo en su lista, quiere decir que ese valor no corresponde a ningun grafo, y no sera considerado como nodo
                 Nodo nodo = new Nodo(l.getFirst().getValor(), l.getFirst().getPeso());
                 lista.add(nodo);
             }
-            /*else{
-                l = null;
-            }*/
+
         }
         return lista;
      }
