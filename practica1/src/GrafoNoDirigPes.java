@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -98,11 +101,8 @@ public class GrafoNoDirigPes {
         ArrayList<Arista> recorrido = new ArrayList<>();
         for(LinkedList<Nodo> l : listaAdy){//Esto corresponderia a la llamada a makeset() ya que decimos que el padre del nodo es el propio nodo y su rank es 0, por lo qu ese creara un arbol con un unico elemento por cada nodo
             if(l.size()>1){
-                l.getFirst().setPadre(l.getFirst().getValor());  //Creamos un 'arbolito' d eun elemento, cuyo padre es él mimso.
+                l.getFirst().setPadre(l.getFirst().getValor());  //Creamos un 'arbolito' de un elemento, cuyo padre es él mimso.
                 l.getFirst().setRank(0);
-                /*for(Nodo n : l){
-                    n.setPadre(l.getFirst().getValor());
-                }*/
             }
         }
 
@@ -112,6 +112,8 @@ public class GrafoNoDirigPes {
                 union(listaAdy[ar.getNodoX().getValor()].getFirst(), listaAdy[ar.getNodoY().getValor()].getFirst());
             }
         }
+
+        writeFile(recorrido);
     }
 
     public void union(Nodo nodoX, Nodo nodoY){
@@ -120,10 +122,37 @@ public class GrafoNoDirigPes {
         Integer rootY = getRoot(nodoY);
 
         if(listaAdy[rootX].getFirst().getRank() > listaAdy[rootY].getFirst().getRank()){
-            
+            listaAdy[rootX].getFirst().setPadre(nodoY.getValor());
         }
-
+        else{
+            listaAdy[rootY].getFirst().setPadre(nodoX.getValor());
+        }
     }
+
+    public void writeFile(ArrayList<Arista> lista){
+        BufferedWriter writer = null;
+        try {
+            //create a temporary file
+            File logFile = new File("MSTKruskal.txt");
+
+            // This will output the full path where the file will be written to...
+            System.out.println("TU FICHERO 'MSTKruskal.txt' ESTARÁ EN: "+logFile.getCanonicalPath());
+
+            writer = new BufferedWriter(new FileWriter(logFile));
+            for(Arista a : lista){
+                writer.write(a.getNodoX()+"->"+a.getNodoY()+":"+a.getPeso());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Close the writer regardless of what happens...
+                writer.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
 
     public int getRoot(Nodo n){
         if(n.getValor() == n.getPadre()){ //si el padre es el propio nodo, habremos llegado a la raiz

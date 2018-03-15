@@ -108,5 +108,11 @@ public class GestorPpal {
         }
         timeTotal = System.currentTimeMillis() - startTime;
         System.out.println("\n\tTiempo empleado en el orden topológico: "+(int) timeTotal / 1000 + "sec, " + timeTotal * 1000+"ms.");
+
+
+        System.out.println("\n\t\t** EJECUTAREMOS EL ALGORITMO DE KRUSKAL PARA EL GNDP **");
+        GestorPpal.getMyGestorPpal().getgNDP().MSTKruskal();
+
+
     }
 }
