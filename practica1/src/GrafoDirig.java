@@ -36,8 +36,10 @@ public class GrafoDirig {
             Integer nodoX = Integer.parseInt(s.split(" ")[0]);
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
 
+            //Nodo npadre = new Nodo(nodoX);
             Nodo nx = new Nodo(nodoY);
             listaAdy[nodoX].add(nx);
+            //nx.setPadre(npadre);
             i++;
         }
     }
@@ -58,7 +60,7 @@ public class GrafoDirig {
         for(LinkedList<Nodo> l : listaAdy){
             if(!res) {
                 if (l.size() > 1) {
-                    System.out.println("[*]mandamos para el ciclo el nodo: " + l.getFirst().getValor());
+                    System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
                     res = profundidadCicloDirig(l.getFirst(), l.getFirst().getValor());
                 }
             }

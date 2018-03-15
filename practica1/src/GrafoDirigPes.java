@@ -31,7 +31,7 @@ public class GrafoDirigPes {
             String s = auxL[i];
             Integer nodoX = Integer.parseInt(s.split(" ")[0]);
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
-            float p = Integer.parseInt(s.split(" ")[2]);
+            float p = Float.parseFloat(s.split(" ")[2]);
 
             Nodo nx = new Nodo(nodoY, p);
             listaAdy[nodoX].add(nx);
@@ -55,7 +55,7 @@ public class GrafoDirigPes {
         for(LinkedList<Nodo> l : listaAdy){
             if(!res) {
                 if (l.size() > 1) {
-                    System.out.println("[*]mandamos para el ciclo el nodo: " + l.getFirst().getValor());
+                    System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
                     res = profundidadCicloDirig(l.getFirst(), l.getFirst().getValor());
                 }
             }

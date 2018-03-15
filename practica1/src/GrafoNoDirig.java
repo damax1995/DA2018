@@ -59,7 +59,7 @@ public class GrafoNoDirig {
         for(LinkedList<Nodo> l : listaAdy){
             if(!res) {
                 if (l.size() > 1) {
-                    System.out.println("[*]mandamos para el ciclo el nodo: " + l.getFirst().getValor());
+                    System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
                     res = profundidadCicloNoDirig(l.getFirst(), l.getFirst().getValor(), primera, -1);
                 }
             }

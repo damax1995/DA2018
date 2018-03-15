@@ -2,8 +2,9 @@ public class Nodo {
 
     private int valor;
     private float peso;
-    private Nodo next;
     private boolean visitado;
+    private int padre; //Lo guardo como integer, ya que me refiero al valor del nodoPadre, ya que con nodos fallaban las referencias.
+    private int rank;
 
     public Nodo(int v){
         valor = v;
@@ -43,7 +44,20 @@ public class Nodo {
         visitado = false;
     }
 
-    public void setNext(Nodo n){
-        next = n;
+    public void setPadre(Integer n){
+        this.padre = n;
     }
+
+    public void setRank(int pRank){
+        rank = pRank;
+    }
+
+    public int getRank(){
+        return rank;
+    }
+
+    public int getPadre(){
+        return padre;
+    }
+
 }
