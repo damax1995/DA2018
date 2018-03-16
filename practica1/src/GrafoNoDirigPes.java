@@ -7,6 +7,7 @@ import java.util.LinkedList;
 public class GrafoNoDirigPes {
 
     private LinkedList<Nodo>[] listaAdy; //lista de adyacencia
+    private ArrayList<Nodo> listaNodos;
     private int n; //número de nodos
     private int a; //número de aristas
     private ArrayList<Arista> listaAristas; //En este caso he utilizado un ArrayList, porque he reciclado el MergeSort realizado en la primera practica,
@@ -28,7 +29,7 @@ public class GrafoNoDirigPes {
 
         while(k<n){ //Inicializamos todas las LinkedLists
             listaAdy[k] = new LinkedList<>();
-            listaAdy[k].addFirst(new Nodo(k, 0));
+            listaAdy[k].addFirst(new Nodo(k));
             k++;
         }
 
@@ -38,11 +39,11 @@ public class GrafoNoDirigPes {
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
             float p = Float.parseFloat(s.split(" ")[2]);
 
-            Nodo nx = new Nodo(nodoY);
-            Nodo ny = new Nodo(nodoX, p);
+            Nodo nx = new Nodo(nodoX, p);
+            Nodo ny = new Nodo(nodoY, p);
 
-            listaAdy[nodoX].add(nx);
-            listaAdy[nodoY].add(ny);
+            listaAdy[nodoX].add(ny);
+            listaAdy[nodoY].add(nx);
             i++;
         }
     }
@@ -93,23 +94,65 @@ public class GrafoNoDirigPes {
         return res;
     }
 
+    public Integer getIndiceNodo(Integer valor){
+        boolean flag = false;
+        int k = 0;
+        for(Nodo n : listaNodos){
+            if(!flag){
+                if(n.getValor() == valor){
+                    flag = true;
+                }
+                else{
+                    k++;
+                }
+            }
+        }
+        return k;
+    }
+
+    public Nodo getNodoPorValor(int valor){
+        boolean flag = false;
+        Nodo auxN = null;
+        for(Nodo n : listaNodos){
+            if(!flag){
+                auxN = n;
+                if(n.getValor() == valor){
+                    flag = true;
+                }
+            }
+        }
+        return auxN;
+    }
 
     public void MSTKruskal(){
+        listaNodos = GestorPpal.getMyGestorPpal().getListaNodos();
         setListaAristas();
         ordenarListaAristas();
 
         ArrayList<Arista> recorrido = new ArrayList<>();
-        for(LinkedList<Nodo> l : listaAdy){//Esto corresponderia a la llamada a makeset() ya que decimos que el padre del nodo es el propio nodo y su rank es 0, por lo qu ese creara un arbol con un unico elemento por cada nodo
+        /*for(LinkedList<Nodo> l : listaAdy){
             if(l.size()>1){
-                l.getFirst().setPadre(l.getFirst().getValor());  //Creamos un 'arbolito' de un elemento, cuyo padre es él mimso.
-                l.getFirst().setRank(0);
+                Integer indiceNodo = getIndiceNodo(l.getFirst().getValor());
+                Nodo nodo = listaNodos.get(indiceNodo);
+                System.out.println("*****"+nodo.getValor());
+                nodo.setPadre(nodo.getValor()); ;  //Creamos un 'arbolito' de un elemento, cuyo padre es él mimso.
+                nodo.setRank(0);
+                listaNodos.add(indiceNodo, nodo);
             }
+        }*/
+
+        for(Nodo n : listaNodos){ //Esto corresponderia a la llamada a makeset() ya que decimos que el padre del nodo es el propio nodo y su rank es 0, por lo qu ese creara un arbol con un unico elemento por cada nodo
+            n.setPadre(n.getValor());
+            n.setRank(0);
         }
 
         for(Arista ar : listaAristas){
-            if(getRoot(listaAdy[ar.getNodoX().getValor()].getFirst()) != getRoot(listaAdy[ar.getNodoY().getValor()].getFirst())){
+            Nodo nx = getNodoPorValor(ar.getNodoX().getValor()); //Obtenemos el nodo de listaNodos cuyo indice es indiceX
+            Nodo ny = getNodoPorValor(ar.getNodoY().getValor()); //Obtenemos el nodo de listaNodos cuyo indice es indiceY
+
+            if(getRoot(nx) != getRoot(ny)){
                 recorrido.add(ar);
-                union(listaAdy[ar.getNodoX().getValor()].getFirst(), listaAdy[ar.getNodoY().getValor()].getFirst());
+                union(nx, ny);
             }
         }
 
@@ -117,16 +160,28 @@ public class GrafoNoDirigPes {
     }
 
     public void union(Nodo nodoX, Nodo nodoY){
-
         Integer rootX = getRoot(nodoX);
         Integer rootY = getRoot(nodoY);
+        Nodo nx = getNodoPorValor(rootX);
+        Nodo ny = getNodoPorValor(rootY);
 
-        if(listaAdy[rootX].getFirst().getRank() > listaAdy[rootY].getFirst().getRank()){
-            listaAdy[rootX].getFirst().setPadre(nodoY.getValor());
+        if(nx.getRank() > ny.getRank()){
+            nx.setPadre(rootY);
         }
         else{
-            listaAdy[rootY].getFirst().setPadre(nodoX.getValor());
+            ny.setPadre(rootX);
+            if(nx.getRank() == ny.getRank()){
+                ny.setRank(ny.getRank()+1);
+            }
         }
+    }
+
+    public float getSumaPesos(ArrayList<Arista> l){
+        float suma = 0;
+        for(Arista a : l){
+            suma += a.getPeso();
+        }
+        return suma;
     }
 
     public void writeFile(ArrayList<Arista> lista){
@@ -139,8 +194,10 @@ public class GrafoNoDirigPes {
             System.out.println("TU FICHERO 'MSTKruskal.txt' ESTARÁ EN: "+logFile.getCanonicalPath());
 
             writer = new BufferedWriter(new FileWriter(logFile));
+            writer.write(lista.size()+"\n");
+            writer.write(Float.toString(getSumaPesos(lista))+"\n");
             for(Arista a : lista){
-                writer.write(a.getNodoX()+"->"+a.getNodoY()+":"+a.getPeso());
+                writer.write(a.getNodoX().getValor()+"->"+a.getNodoY().getValor()+":"+a.getPeso()+"\n");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -159,7 +216,7 @@ public class GrafoNoDirigPes {
             return n.getValor();
         }
         else{ // si no miraremos lo mismo para el padre del nodo
-            getRoot(listaAdy[n.getPadre()].getFirst());
+            getRoot(getNodoPorValor(n.getPadre()));
         }
         return -1; //si no se encontró un padre, se devuelve -1
     }
@@ -169,7 +226,7 @@ public class GrafoNoDirigPes {
 
         for(LinkedList<Nodo> l : listaAdy){
             for(Nodo n : l){
-                if(l.getFirst() != n && revisados.get(n.getValor()) == null){ //La comprobacion de revisamos la hacemos para no tener el doble de aristas
+                if(l.getFirst() != n && !revisados.contains(n.getValor())){ //La comprobacion de revisamos la hacemos para no tener el doble de aristas
                     Arista auxA = new Arista(l.getFirst(), n, n.getPeso());     //ya que el grafo es no dirigido.
                     listaAristas.add(auxA);
                 }

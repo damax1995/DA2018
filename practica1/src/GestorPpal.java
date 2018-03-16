@@ -111,7 +111,10 @@ public class GestorPpal {
 
 
         System.out.println("\n\t\t** EJECUTAREMOS EL ALGORITMO DE KRUSKAL PARA EL GNDP **");
+        startTime = System.currentTimeMillis();
         GestorPpal.getMyGestorPpal().getgNDP().MSTKruskal();
+        timeTotal = System.currentTimeMillis() - startTime;
+        System.out.println("\n\tTiempo empleado en el algoritmo MSTKruskal: "+(int) timeTotal / 1000 + "sec, " + timeTotal * 1000+"ms.");
 
 
     }
