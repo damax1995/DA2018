@@ -1,5 +1,8 @@
+import sun.awt.image.ImageWatched;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class GestorPpal {
 
@@ -109,6 +112,11 @@ public class GestorPpal {
         timeTotal = System.currentTimeMillis() - startTime;
         System.out.println("\n\tTiempo empleado en el orden topológico: "+(int) timeTotal / 1000 + "sec, " + timeTotal * 1000+"ms.");
 
+        System.out.println("\n\t\t** OBTENDREMOS LAS COORD. CONEXAS PARA EL GND **");
+        startTime = System.currentTimeMillis();
+        LinkedList<Integer>[] l = GestorPpal.getMyGestorPpal().getgND().componentesConexas();
+        timeTotal = System.currentTimeMillis() - startTime;
+        System.out.println("\n\tTiempo empleado en obtener la lista de coordenadas conexas: "+(int) timeTotal / 1000 + "sec, " + timeTotal * 1000+"ms.");
 
         System.out.println("\n\t\t** EJECUTAREMOS EL ALGORITMO DE KRUSKAL PARA EL GNDP **");
         startTime = System.currentTimeMillis();

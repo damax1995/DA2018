@@ -1,11 +1,13 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class GrafoNoDirig {
 
     private LinkedList<Nodo>[] listaAdy; //lista de adyacencia
     private int n; //número de nodos
     private int a; //número de aristas
+    private ArrayList<Nodo> listaNodos;
 
     public GrafoNoDirig(){
         n = 0;
@@ -40,9 +42,11 @@ public class GrafoNoDirig {
             listaAdy[nodoY].add(ny);
             i++;
         }
+
+        //listaNodos = GestorPpal.getMyGestorPpal().getListaNodos();
     }
 
-    public void resetVisitadoCiclos(){
+    public void resetVisitados(){
         for(LinkedList<Nodo> l : listaAdy){
             if(l.size() > 1){
                 for(Nodo n : l){
@@ -84,7 +88,7 @@ public class GrafoNoDirig {
                 }
             }
         }
-        resetVisitadoCiclos();
+        resetVisitados();
         return res;
     }
      public ArrayList<Nodo> getListaNodos(){
@@ -99,6 +103,94 @@ public class GrafoNoDirig {
         }
         return lista;
      }
+
+    public LinkedList<Integer>[] componentesConexas(){
+        listaNodos = GestorPpal.getMyGestorPpal().getListaNodos();
+        LinkedList<Integer>[] compCon = new LinkedList[getListaNodos().size()];
+        int k = 0;
+        int pos = 0;
+        resetVisitadosNodos();
+        Queue<Nodo> recorridoAct = new LinkedList<Nodo>();
+
+        while(pos < listaNodos.size()){
+            compCon[pos] = new LinkedList<>();
+            pos++;
+        }
+
+        for(Nodo n : listaNodos){
+            if(!n.visitado()){
+                n.setVisitado();
+                recorridoAct.add(n);
+                visitarConexas(n, compCon, k, recorridoAct);
+                k++;
+            }
+        }
+
+        System.out.println("_______");
+        for(LinkedList<Integer> l : compCon){
+            if(l.size()>0) {
+                for (Integer i : l) {
+                    System.out.println(i);
+                }
+                System.out.println("_______");
+            }
+        }
+        return compCon;
+    }
+
+    public void resetVisitadosNodos(){
+        for(Nodo n: listaNodos){
+            n.setNoVisitado();
+        }
+    }
+
+    public void visitarNodo(Nodo n){
+        for(Nodo nodo : listaNodos){
+            if(n.getValor() == nodo.getValor()){
+                nodo.setVisitado();
+            }
+        }
+    }
+
+    public boolean estaVisitado(Nodo n){
+        for(Nodo nodo : listaNodos){
+            if (nodo.getValor() == n.getValor()) {
+                return nodo.visitado();
+            }
+        }
+        return true;
+    }
+
+    public void visitarConexas(Nodo n, LinkedList<Integer>[] compCon, int k, Queue<Nodo> q){
+        compCon[k].add(n.getValor());
+        while(!q.isEmpty()){
+            Nodo u = q.remove();
+            for(Nodo nodo : listaAdy[u.getValor()]){
+                if(nodo.getValor() != listaAdy[u.getValor()].getFirst().getValor()) {
+                    Nodo auxN = getNodoPorValor(nodo.getValor());
+                    if (!estaVisitado(auxN)) {
+                        compCon[k].add(auxN.getValor());
+                        q.add(nodo);
+                        visitarNodo(auxN);
+                    }
+                }
+            }
+        }
+    }
+
+    public Nodo getNodoPorValor(int valor){
+        boolean flag = false;
+        Nodo auxN = null;
+        for(Nodo n : listaNodos){
+            if(!flag){
+                auxN = n;
+                if(n.getValor() == valor){
+                    flag = true;
+                }
+            }
+        }
+        return auxN;
+    }
 
     public void printGrafo(){
         int k = 0;
