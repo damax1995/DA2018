@@ -18,35 +18,36 @@ public class GrafoDirig {
 
     public void crearGrafo(){
         int i = 2;
-        int k = 0;
         String[] auxL = GestorFichero.getMyGestorFichero().getContenidoTxt();
 
         listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length+1];
         numNodos = listaAdy.length;
         a = Integer.parseInt(auxL[1]);
 
-        while(k<numNodos){ //Inicializamos todas las LinkedLists
-            listaAdy[k] = new LinkedList<>();
-            listaAdy[k].addFirst(new Nodo(k)); //añadimos el propio nodo como primer adyacente
-            k++;
-        }
-
         while(i<auxL.length){
             String s = auxL[i];
             Integer nodoX = Integer.parseInt(s.split(" ")[0]);
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
 
-            //Nodo npadre = new Nodo(nodoX);
-            Nodo nx = new Nodo(nodoY);
-            listaAdy[nodoX].add(nx);
-            //nx.setPadre(npadre);
+            Nodo nx = new Nodo(nodoX);
+            Nodo ny = new Nodo(nodoY);
+            if(listaAdy[nodoX] == null){
+                listaAdy[nodoX] = new LinkedList<>();
+                listaAdy[nodoX].addFirst(nx);
+            }
+            if(listaAdy[nodoY] == null){
+                listaAdy[nodoY] = new LinkedList<>();
+                listaAdy[nodoY].addFirst(ny);
+            }
+
+            listaAdy[nodoX].add(ny);
             i++;
         }
     }
 
     public void resetVisitadoCiclos(){
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size() > 1){
+            if(l != null){
                 for(Nodo n : l){
                     n.setNoVisitado();
                 }
@@ -59,7 +60,7 @@ public class GrafoDirig {
 
         for(LinkedList<Nodo> l : listaAdy){
             if(!res) {
-                if (l.size() > 1) {
+                if (l != null) {
                     System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
                     res = profundidadCicloDirig(l.getFirst(), l.getFirst().getValor());
                 }
@@ -133,7 +134,7 @@ public class GrafoDirig {
     public void printGrafo(){
         int k = 0;
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size()>1) {
+            if(l != null) {
                 System.out.println("\n[*]Vecinos del nodo " + k + ":");
                 for (Nodo n : l) {
                     System.out.print(n.getValor() + " | ");

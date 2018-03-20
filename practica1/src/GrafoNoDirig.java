@@ -25,33 +25,34 @@ public class GrafoNoDirig {
         n = GestorFichero.getMyGestorFichero().getContenidoTxt().length;
         a = Integer.parseInt(auxL[1]);
 
-        while(k<GestorFichero.getMyGestorFichero().getContenidoTxt().length+1){ //Inicializamos todas las LinkedLists
-            listaAdy[k] = new LinkedList<>();
-            listaAdy[k].addFirst(new Nodo(k));
-            k++;
-        }
-
         while(i<auxL.length){
             String s = auxL[i];
             Integer nodoX = Integer.parseInt(s.split(" ")[0]);
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
 
-            Nodo nx = new Nodo(nodoY);
-            Nodo ny = new Nodo(nodoX);
+            Nodo nx = new Nodo(nodoX);
+            Nodo ny = new Nodo(nodoY);
+            if(listaAdy[nodoX] == null){
+                listaAdy[nodoX] = new LinkedList<>();
+                listaAdy[nodoX].addFirst(nx);
+            }
+            if(listaAdy[nodoY] == null){
+                listaAdy[nodoY] = new LinkedList<>();
+                listaAdy[nodoY].addFirst(ny);
+            }
 
-            System.out.println("Añadimos arista: "+nodoX+"->"+nodoY);
-
-            listaAdy[nodoX].add(nx);
-            listaAdy[nodoY].add(ny);
+            listaAdy[nodoX].add(ny);
+            listaAdy[nodoY].add(nx);
             i++;
         }
+
 
         //listaNodos = GestorPpal.getMyGestorPpal().getListaNodos();
     }
 
     public void resetVisitados(){
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size() > 1){
+            if(l != null){
                 for(Nodo n : l){
                     n.setNoVisitado();
                 }
@@ -94,15 +95,13 @@ public class GrafoNoDirig {
         resetVisitados();
         return res;
     }
-     public ArrayList<Nodo> getListaNodos(){
+     public ArrayList<Nodo> getListaNodos(){    //TENGO QUE RESOLVER LA DUDA DE RELLENAR EL ARRAY HASTA EL NUM MAS ALTO DEL TXT!!!!!!!!!!!!!!!!!!!!!!!!
         ArrayList<Nodo> lista = new ArrayList<>();
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size()>1 && l != null){ //Si hay algun elemento mas a parte de él mismo, pertenece al grafo,
-                            //si solo esta el propio nodo en su lista, quiere decir que ese valor no corresponde a ningun grafo, y no sera considerado como nodo
+            if(l != null){
                 Nodo nodo = new Nodo(l.getFirst().getValor(), l.getFirst().getPeso());
                 lista.add(nodo);
             }
-
         }
         return lista;
      }
@@ -196,15 +195,15 @@ public class GrafoNoDirig {
     }
 
     public void printGrafo(){
-        int k = 0;
+
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size()>1) {
-                System.out.println("\n[*]Vecinos del nodo " + k + ":");
+            if(l != null) {
+                System.out.println("\n[*]Vecinos del nodo " + l.getFirst().getValor() + ":");
                 for (Nodo n : l) {
                     System.out.print(n.getValor() + " | ");
                 }
             }
-            k++;
+
         }
         System.out.println();
     }

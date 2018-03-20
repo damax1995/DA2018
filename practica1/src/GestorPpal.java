@@ -74,6 +74,11 @@ public class GestorPpal {
             if(opc ==1){
                 GestorPpal.getMyGestorPpal().getgND().crearGrafo();
                 GestorPpal.getMyGestorPpal().rellenarListaNodos();
+                System.out.println("LISTANODOS: ");
+                for(Nodo n : getMyGestorPpal().getListaNodos()){
+                    System.out.println(n.getValor());
+                }
+                System.out.println("_____________");
                 GestorPpal.getMyGestorPpal().getgND().printGrafo();
             }
             else if(opc == 2){

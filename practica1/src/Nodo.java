@@ -9,6 +9,7 @@ public class Nodo {
     public Nodo(int v){
         valor = v;
         visitado = false;
+        peso = 0;
     }
 
     public Nodo(int v, float p){
@@ -50,6 +51,10 @@ public class Nodo {
 
     public void setRank(int pRank){
         rank = pRank;
+    }
+
+    public void aumRank(){
+        rank++;
     }
 
     public int getRank(){

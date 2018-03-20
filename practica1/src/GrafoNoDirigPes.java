@@ -27,20 +27,22 @@ public class GrafoNoDirigPes {
         a = Integer.parseInt(auxL[1]);
         listaAristas = new ArrayList<>();
 
-        while(k<n){ //Inicializamos todas las LinkedLists
-            listaAdy[k] = new LinkedList<>();
-            listaAdy[k].addFirst(new Nodo(k));
-            k++;
-        }
-
         while(i<auxL.length){
             String s = auxL[i];
             Integer nodoX = Integer.parseInt(s.split(" ")[0]);
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
-            float p = Float.parseFloat(s.split(" ")[2]);
+            float peso = Float.parseFloat(s.split(" ")[2]);
 
-            Nodo nx = new Nodo(nodoX, p);
-            Nodo ny = new Nodo(nodoY, p);
+            Nodo nx = new Nodo(nodoX, peso);
+            Nodo ny = new Nodo(nodoY, peso);
+            if(listaAdy[nodoX] == null){
+                listaAdy[nodoX] = new LinkedList<>();
+                listaAdy[nodoX].addFirst(nx);
+            }
+            if(listaAdy[nodoY] == null){
+                listaAdy[nodoY] = new LinkedList<>();
+                listaAdy[nodoY].addFirst(ny);
+            }
 
             listaAdy[nodoX].add(ny);
             listaAdy[nodoY].add(nx);
@@ -124,31 +126,35 @@ public class GrafoNoDirigPes {
         return auxN;
     }
 
+    public void mostrarNodos(){
+        for(Nodo n : listaNodos){
+            System.out.println("Nodo "+n.getValor()+". Con padre: "+n.getPadre()+". Con root: "+getRoot(n));
+        }
+    }
+
     public void MSTKruskal(){
         listaNodos = GestorPpal.getMyGestorPpal().getListaNodos();
-        setListaAristas();
-        ordenarListaAristas();
-
-        ArrayList<Arista> recorrido = new ArrayList<>();
-        /*for(LinkedList<Nodo> l : listaAdy){
-            if(l.size()>1){
-                Integer indiceNodo = getIndiceNodo(l.getFirst().getValor());
-                Nodo nodo = listaNodos.get(indiceNodo);
-                System.out.println("*****"+nodo.getValor());
-                nodo.setPadre(nodo.getValor()); ;  //Creamos un 'arbolito' de un elemento, cuyo padre es él mimso.
-                nodo.setRank(0);
-                listaNodos.add(indiceNodo, nodo);
-            }
-        }*/
 
         for(Nodo n : listaNodos){ //Esto corresponderia a la llamada a makeset() ya que decimos que el padre del nodo es el propio nodo y su rank es 0, por lo qu ese creara un arbol con un unico elemento por cada nodo
             n.setPadre(n.getValor());
             n.setRank(0);
         }
 
+        System.out.println("INICIAL");
+        mostrarNodos();
+
+        setListaAristas();
+        ordenarListaAristas();
+
+        ArrayList<Arista> recorrido = new ArrayList<>();
+
+
+
         for(Arista ar : listaAristas){
             Nodo nx = getNodoPorValor(ar.getNodoX().getValor()); //Obtenemos el nodo de listaNodos cuyo indice es indiceX
             Nodo ny = getNodoPorValor(ar.getNodoY().getValor()); //Obtenemos el nodo de listaNodos cuyo indice es indiceY
+
+            System.out.println("Miramos-> root de "+nx.getValor()+": "+getRoot(nx)+"| root de "+ny.getValor()+": "+getRoot(ny));
 
             if(getRoot(nx) != getRoot(ny)){
                 recorrido.add(ar);
@@ -165,15 +171,21 @@ public class GrafoNoDirigPes {
         Nodo nx = getNodoPorValor(rootX);
         Nodo ny = getNodoPorValor(rootY);
 
+        System.out.println("rootX: "+rootX+" | rootY: "+rootY);
+        System.out.println("Nodo x: "+nx.getValor()+" | Nodo y: "+ny.getValor());
+
         if(nx.getRank() > ny.getRank()){
-            nx.setPadre(rootY);
+            nx.setPadre(nodoY.getValor());
         }
         else{
-            ny.setPadre(rootX);
+            ny.setPadre(nodoX.getValor());
+            System.out.println(ny.getPadre()+"!!!!!!!");
+            System.out.println(nx.getPadre()+"!!!!!!!!!");
             if(nx.getRank() == ny.getRank()){
-                ny.setRank(ny.getRank()+1);
+                ny.aumRank();
             }
         }
+        mostrarNodos();
     }
 
     public float getSumaPesos(ArrayList<Arista> l){
@@ -212,26 +224,27 @@ public class GrafoNoDirigPes {
 
 
     public int getRoot(Nodo n){
-        if(n.getValor() == n.getPadre()){ //si el padre es el propio nodo, habremos llegado a la raiz
+        if(n.getPadre() == n.getValor()){
             return n.getValor();
         }
-        else{ // si no miraremos lo mismo para el padre del nodo
-            getRoot(getNodoPorValor(n.getPadre()));
+        else{
+            return getRoot(getNodoPorValor(n.getPadre()));
         }
-        return -1; //si no se encontró un padre, se devuelve -1
     }
 
     public void setListaAristas(){
         ArrayList<Integer> revisados = new ArrayList<>();
 
         for(LinkedList<Nodo> l : listaAdy){
-            for(Nodo n : l){
-                if(l.getFirst() != n && !revisados.contains(n.getValor())){ //La comprobacion de revisamos la hacemos para no tener el doble de aristas
-                    Arista auxA = new Arista(l.getFirst(), n, n.getPeso());     //ya que el grafo es no dirigido.
-                    listaAristas.add(auxA);
+            if(l != null) {
+                for (Nodo n : l) {
+                    if (l.getFirst() != n && !revisados.contains(n.getValor())) { //La comprobacion de revisamos la hacemos para no tener el doble de aristas
+                        Arista auxA = new Arista(l.getFirst(), n, n.getPeso());     //ya que el grafo es no dirigido.
+                        listaAristas.add(auxA);
+                    }
                 }
+                revisados.add(l.getFirst().getValor());
             }
-            revisados.add(l.getFirst().getValor());
         }
     }
 
@@ -293,7 +306,7 @@ public class GrafoNoDirigPes {
     public void printGrafo(){
         int k = 0;
         for(LinkedList<Nodo> l : listaAdy){
-            if(l.size()>1) {
+            if(l != null) {
                 System.out.println("\n[*]Vecinos del nodo " + k + ":");
                 for (Nodo n : l) {
                     System.out.print("v: " + n.getValor() + ", p: " + n.getPeso() + " | ");
