@@ -22,7 +22,7 @@ public class GrafoNoDirigPes {
         int k = 0;
         String[] auxL = GestorFichero.getMyGestorFichero().getContenidoTxt();
 
-        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length];
+        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length+1];
         n = listaAdy.length;
         a = Integer.parseInt(auxL[1]);
         listaAristas = new ArrayList<>();

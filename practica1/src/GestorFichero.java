@@ -31,23 +31,19 @@ public class GestorFichero {
         int k = 0;
         Scanner scan = new Scanner(System.in);
         System.out.println("Introduce opción (1, 2 o 3):\n" +
-                "\t1) Cargar fichero propio, con 10 nodos y 9 aristas.\n" +
-                "\t2) Cargar fichero 7 nodos y 21 aristas\n" +
-                "\t3) Cargar fichero 100 nodos y 1000 aristas\n"+
-                "\t4) Cargar fichero propio 20 nodos y 22 aristas, con 3 listas en coord. conex + topologico.");
+                "\t1) Cargar fichero propio, grafo simple, sin ciclos, con 10 nodos y 9 aristas.\n" +
+                "\t2) Cargar fichero propio, sin ciclos en el dirigido, pero cicla sin dirigir, con 3 subgrafos para las coord. conexas, 20 nodos y 22 aristas.\n" +
+                "\t3) Cargar fichero 100 nodos y 1000 aristas (no propio).\n");
 
 
         int opc = scan.nextInt();
         if(opc == 1){
-            f = new File("topo.txt");
+            f = new File("grafo1000-8433.txt");
         }else if(opc == 2){
-            f = new File("7n21a.txt");
+            f = new File("grafoCC.txt");
         }
-        else if(opc == 3){
-            f = new File("100n1000a.txt");
-        }
-        else if(opc == 4){
-            f = new File("CONEXAS.txt");
+        else if(opc == 3) {
+            f = new File("grafo8-16.txt");
         }
 
 

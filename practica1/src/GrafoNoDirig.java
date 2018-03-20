@@ -20,11 +20,12 @@ public class GrafoNoDirig {
         String[] auxL = GestorFichero.getMyGestorFichero().getContenidoTxt();
 
         //listaAdy = new LinkedList[Integer.parseInt(auxL[0])+1];
-        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length];
+        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length+1];
+        System.out.println(GestorFichero.getMyGestorFichero().getContenidoTxt().length+"********************");
         n = GestorFichero.getMyGestorFichero().getContenidoTxt().length;
         a = Integer.parseInt(auxL[1]);
 
-        while(k<n){ //Inicializamos todas las LinkedLists
+        while(k<GestorFichero.getMyGestorFichero().getContenidoTxt().length+1){ //Inicializamos todas las LinkedLists
             listaAdy[k] = new LinkedList<>();
             listaAdy[k].addFirst(new Nodo(k));
             k++;
@@ -37,6 +38,8 @@ public class GrafoNoDirig {
 
             Nodo nx = new Nodo(nodoY);
             Nodo ny = new Nodo(nodoX);
+
+            System.out.println("Añadimos arista: "+nodoX+"->"+nodoY);
 
             listaAdy[nodoX].add(nx);
             listaAdy[nodoY].add(ny);

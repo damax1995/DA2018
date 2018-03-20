@@ -21,7 +21,7 @@ public class GrafoDirig {
         int k = 0;
         String[] auxL = GestorFichero.getMyGestorFichero().getContenidoTxt();
 
-        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length];
+        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length+1];
         numNodos = listaAdy.length;
         a = Integer.parseInt(auxL[1]);
 
