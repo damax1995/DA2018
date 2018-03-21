@@ -5,11 +5,15 @@ public class Nodo {
     private boolean visitado;
     private int padre; //Lo guardo como integer, ya que me refiero al valor del nodoPadre, ya que con nodos fallaban las referencias.
     private int rank;
+    private int index;
+    private int lowlink;
 
     public Nodo(int v){
         valor = v;
         visitado = false;
         peso = 0;
+        index = -1;
+        lowlink = -1;
     }
 
     public Nodo(int v, float p){
@@ -63,6 +67,22 @@ public class Nodo {
 
     public int getPadre(){
         return padre;
+    }
+
+    public void setIndex(int i){
+        index = i;
+    }
+
+    public int getIndex(){
+        return index;
+    }
+
+    public int getLowlink(){
+        return lowlink;
+    }
+
+    public void setLowlink(int i){
+        lowlink = i;
     }
 
 }

@@ -33,7 +33,8 @@ public class GestorFichero {
         System.out.println("Introduce opción (1, 2, 3 o 4):\n" +
                 "\t1) Cargar fichero grafo sin nodo 5 ni nodo 7.\n" +
                 "\t2) Cargar fichero Componenetes Conexas.\n" +
-                "\t3) Cargar fichero Kruskal.");
+                "\t3) Cargar fichero Kruskal.\n" +
+                "\t4) Cargar fichero Kruskal grafo 1000 nodos y 8433 aristas.");
 
 
         int opc = scan.nextInt();
@@ -44,6 +45,9 @@ public class GestorFichero {
         }
         else if(opc == 3) {
             f = new File("grafo8-16.txt");
+        }
+        else if(opc == 4){
+            f = new File("grafo1000-8433.txt");
         }
 
         List<String> lines = new BufferedReader(new FileReader(f)).lines().collect(Collectors.toList()); //Leemos el txt

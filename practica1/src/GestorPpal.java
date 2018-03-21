@@ -120,6 +120,16 @@ public class GestorPpal {
             else if(opc == 9){
                 GestorPpal.getMyGestorPpal().getgNDP().MSTKruskal();
             }
+            else if(opc == 10) {
+                LinkedList<Integer>[] l = GestorPpal.getMyGestorPpal().getgD().componentesFuertementeConexas();
+                for (LinkedList<Integer> l2 : l) {
+                    System.out.println("_________");
+                    for (Integer i : l2) {
+                        System.out.println(i);
+                    }
+                }
+                System.out.println("_______");
+            }
             else if(opc == 0){
                 System.out.println("Agur xd.");
                 opc = -1;

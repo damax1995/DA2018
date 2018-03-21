@@ -1,0 +1,6 @@
+Este proyecto contiene una carpeta 'src', donde se almacenará todo lo relacionado al codigo del proyecto, y una carpeta 'res' con los ficheros utilizados.
+Además de esto, junto a estas carpeta se incluirán los 3 archivos '.txt' utilizados en la practica, 2 de los cuales son propios, así que son grafos simples con los cuales he podido realizar pruebas, y he podido dibujarlos para adjuntarlos en 2 '.jpg'-s para comprobar los resultados.
+
+El programa se ejecutara desde la clase 'GestorPpal', que contendrá el 'main' y hara las llamadas pertinentes al resto de clases para ejecutar el programa.
+
+El programa de pruebas será el propio 'main' que empezará dejando escoger que fichero quiere cargar el usuario, y despues mostrará por consola los resultados de la ejecución de las funciones principales, junto con el coste temporal que le ha requerido expresado en 'segundos, milisegundos'

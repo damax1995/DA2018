@@ -67,7 +67,7 @@ public class GrafoNoDirig {
         for(LinkedList<Nodo> l : listaAdy){
             if(!res) {
                 if (l.size() > 1) {
-                    System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
+                    //System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
                     res = profundidadCicloNoDirig(l.getFirst(), l.getFirst().getValor(), primera, -1);
                 }
             }
@@ -83,7 +83,7 @@ public class GrafoNoDirig {
         for(Nodo n : listaAdy[nodo.getValor()]){
             if(listaAdy[nodo.getValor()].size() > 2) {
                 if (n.getValor() != listaAdy[nodo.getValor()].getFirst().getValor() && n.getValor() != padre && !n.visitado() && !res) {
-                    System.out.println("\tcomprobamos nodo: " + n.getValor() + ". Y ciclo con: " + elem);
+                    //System.out.println("\tcomprobamos nodo: " + n.getValor() + ". Y ciclo con: " + elem);
                     if (n.getValor() == elem) {
                         res = true;
                     } else {

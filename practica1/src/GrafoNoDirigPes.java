@@ -126,12 +126,6 @@ public class GrafoNoDirigPes {
         return auxN;
     }
 
-    public void mostrarNodos(){
-        for(Nodo n : listaNodos){
-            System.out.println("Nodo "+n.getValor()+". Con padre: "+n.getPadre()+". Con root: "+getRoot(n));
-        }
-    }
-
     public void MSTKruskal(){
         listaNodos = GestorPpal.getMyGestorPpal().getListaNodos();
 
@@ -139,9 +133,6 @@ public class GrafoNoDirigPes {
             n.setPadre(n.getValor());
             n.setRank(0);
         }
-
-        System.out.println("INICIAL");
-        mostrarNodos();
 
         setListaAristas();
         ordenarListaAristas();
@@ -153,8 +144,6 @@ public class GrafoNoDirigPes {
         for(Arista ar : listaAristas){
             Nodo nx = getNodoPorValor(ar.getNodoX().getValor()); //Obtenemos el nodo de listaNodos cuyo indice es indiceX
             Nodo ny = getNodoPorValor(ar.getNodoY().getValor()); //Obtenemos el nodo de listaNodos cuyo indice es indiceY
-
-            System.out.println("Miramos-> root de "+nx.getValor()+": "+getRoot(nx)+"| root de "+ny.getValor()+": "+getRoot(ny));
 
             if(getRoot(nx) != getRoot(ny)){
                 recorrido.add(ar);
@@ -171,21 +160,15 @@ public class GrafoNoDirigPes {
         Nodo nx = getNodoPorValor(rootX);
         Nodo ny = getNodoPorValor(rootY);
 
-        System.out.println("rootX: "+rootX+" | rootY: "+rootY);
-        System.out.println("Nodo x: "+nx.getValor()+" | Nodo y: "+ny.getValor());
-
         if(nx.getRank() > ny.getRank()){
             nx.setPadre(nodoY.getValor());
         }
         else{
             ny.setPadre(nodoX.getValor());
-            System.out.println(ny.getPadre()+"!!!!!!!");
-            System.out.println(nx.getPadre()+"!!!!!!!!!");
             if(nx.getRank() == ny.getRank()){
                 ny.aumRank();
             }
         }
-        mostrarNodos();
     }
 
     public float getSumaPesos(ArrayList<Arista> l){

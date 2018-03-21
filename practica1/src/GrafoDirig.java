@@ -1,15 +1,14 @@
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class GrafoDirig {
 
     private LinkedList<Nodo>[] listaAdy; //lista de adyacencia
     private int numNodos; //número de nodos
     private int a; //número de aristas
-    int pos = Integer.parseInt(GestorFichero.getMyGestorFichero().getContenidoTxt()[0]); //sera el indice utilizado para el orden topologico
+    int pos = 0; //sera el indice utilizado para el orden topologico
+    int index = 0;
+    int posFC = 0;
 
     public GrafoDirig(){
         numNodos = 0;
@@ -18,27 +17,28 @@ public class GrafoDirig {
 
     public void crearGrafo(){
         int i = 2;
+        int k = 0;
         String[] auxL = GestorFichero.getMyGestorFichero().getContenidoTxt();
 
-        listaAdy = new LinkedList[GestorFichero.getMyGestorFichero().getContenidoTxt().length+1];
-        numNodos = listaAdy.length;
+        numNodos = Integer.parseInt(auxL[0]);
+
+        pos = numNodos-1;
+
         a = Integer.parseInt(auxL[1]);
+        listaAdy = new LinkedList[numNodos];
+
+        while(k<numNodos){
+            listaAdy[k] = new LinkedList<>();
+            listaAdy[k].add(new Nodo(k));
+            k++;
+        }
 
         while(i<auxL.length){
             String s = auxL[i];
             Integer nodoX = Integer.parseInt(s.split(" ")[0]);
             Integer nodoY = Integer.parseInt(s.split(" ")[1]);
 
-            Nodo nx = new Nodo(nodoX);
             Nodo ny = new Nodo(nodoY);
-            if(listaAdy[nodoX] == null){
-                listaAdy[nodoX] = new LinkedList<>();
-                listaAdy[nodoX].addFirst(nx);
-            }
-            if(listaAdy[nodoY] == null){
-                listaAdy[nodoY] = new LinkedList<>();
-                listaAdy[nodoY].addFirst(ny);
-            }
 
             listaAdy[nodoX].add(ny);
             i++;
@@ -61,7 +61,7 @@ public class GrafoDirig {
         for(LinkedList<Nodo> l : listaAdy){
             if(!res) {
                 if (l != null) {
-                    System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
+                    //System.out.println("[*]Comprobamos si tiene ciclo en el nodo: " + l.getFirst().getValor());
                     res = profundidadCicloDirig(l.getFirst(), l.getFirst().getValor());
                 }
             }
@@ -76,7 +76,7 @@ public class GrafoDirig {
 
         for(Nodo n : listaAdy[nodo.getValor()]){
             if(n != listaAdy[nodo.getValor()].getFirst() && !n.visitado() && !res) {
-                System.out.println("\tcomprobamos nodo: "+n.getValor()+". Y ciclo con: "+elem);
+                //System.out.println("\tcomprobamos nodo: "+n.getValor()+". Y ciclo con: "+elem);
                 if (n.getValor() == elem) {
                     res = true;
                 } else {
@@ -89,46 +89,85 @@ public class GrafoDirig {
     }
 
     public int[] ordenTopologico(){
-        int[] res = new int[pos];
-        ArrayList<Nodo> auxLista = GestorPpal.getMyGestorPpal().getListaNodos();
+        int[] res = new int[numNodos];
 
-        for(Nodo nodo : auxLista){
-            nodo.setNoVisitado();
+        for(LinkedList<Nodo> l : listaAdy){
+            l.getFirst().setNoVisitado();
         }
 
-        for(Nodo n : auxLista){
+        for(LinkedList<Nodo> l :listaAdy){
+            Nodo n = l.getFirst();
             if(!n.visitado()){
-                ordenTopo(res, auxLista, n);
+                ordenTopo(res, n);
             }
         }
 
         return res;
     }
 
-    public void ordenTopo(int[] res, ArrayList<Nodo> auxLista, Nodo n){
-        auxLista.get(auxLista.indexOf(n)).setVisitado();
+    public void ordenTopo(int[] res, Nodo n){
+        listaAdy[n.getValor()].getFirst().setVisitado();
 
         for(Nodo auxNodo : listaAdy[n.getValor()]){
-            int pos = 0;
-            boolean flag = false;
-            for(Nodo n2 : auxLista){
-                if(!flag) {
-                    if (n2.getValor() != auxNodo.getValor()){
-                        pos++;
-                    }
-                    else{
-                        flag = true;
-                    }
+            if(auxNodo != listaAdy[n.getValor()].getFirst()) {
+                if (!listaAdy[auxNodo.getValor()].getFirst().visitado()) {
+                    ordenTopo(res, auxNodo);
                 }
             }
+        }
+        res[pos] = n.getValor();
+        pos--;
+    }
 
-            Nodo n3 = auxLista.get(pos);
-            if(!n3.visitado()){
-                ordenTopo(res, auxLista, n3);
+
+    public LinkedList<Integer>[] componentesFuertementeConexas(){
+        Stack<Integer> s = new Stack<>();
+        LinkedList<Integer>[] lista = new LinkedList[numNodos];
+        for(LinkedList<Nodo> l : listaAdy){
+            Nodo n = l.getFirst();
+            if(n.getIndex() == -1){
+                scc(n, lista, s);
             }
         }
-        res[pos-1] = n.getValor();
-        pos--;
+        return lista;
+    }
+
+    public void scc(Nodo n, LinkedList<Integer>[] lista, Stack<Integer> s){
+        listaAdy[n.getValor()].getFirst().setIndex(index);
+        listaAdy[n.getValor()].getFirst().setLowlink(index);
+        index++;
+
+        s.push(n.getValor());
+
+        for(Nodo auxN : listaAdy[n.getValor()]){
+            if(auxN != listaAdy[n.getValor()].getFirst()){
+                if(auxN.getIndex() == -1){
+                    scc(listaAdy[auxN.getValor()].getFirst(), lista, s);
+                    listaAdy[n.getValor()].getFirst().setLowlink(minimo(listaAdy[n.getValor()].getFirst().getValor(), listaAdy[auxN.getValor()].getFirst().getValor()));
+                }
+                else if(s.contains(auxN.getValor())){
+                    listaAdy[n.getValor()].getFirst().setLowlink(minimo(listaAdy[n.getValor()].getFirst().getLowlink(), listaAdy[n.getValor()].getFirst().getIndex()));
+                }
+            }
+        }
+
+        if(listaAdy[n.getValor()].getFirst().getLowlink() == listaAdy[n.getValor()].getFirst().getIndex()){
+            LinkedList<Integer> auxL = new LinkedList<>();
+            while(!s.isEmpty() && s.peek()!= n.getValor()){
+                auxL.add(s.pop());
+            }
+            lista[posFC] = auxL;
+            posFC++;
+        }
+    }
+
+    public int minimo(int a, int b){
+        if(a>b){
+            return a;
+        }
+        else{
+            return b;
+        }
     }
 
     public void printGrafo(){
