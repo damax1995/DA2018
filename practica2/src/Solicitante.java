@@ -1,27 +1,32 @@
 public class Solicitante {
 
-    private float dinero;
-    private float peso;
+    private int dinero;
+    private int peso;
     private int id;
 
-    public Solicitante(float d, float p){
+    public Solicitante(int d, int p, int i){
         dinero = d;
         peso = p;
+        id = i;
     }
 
-    public float getDinero() {
+    public int getDinero() {
         return dinero;
     }
 
-    public void setDinero(float dinero) {
+    public void setDinero(int dinero) {
         this.dinero = dinero;
     }
 
-    public float getPeso() {
+    public int getPeso() {
         return peso;
     }
 
-    public void setPeso(float peso) {
+    public void setPeso(int peso) {
         this.peso = peso;
+    }
+
+    public int getId(){
+        return this.id;
     }
 }
