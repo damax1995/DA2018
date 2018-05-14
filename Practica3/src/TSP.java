@@ -1,108 +1,165 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.io.*;
+import java.nio.file.Files;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+//import java.util.PriorityQueue;
 
 public class TSP {
 
-    private static TSP myTSP;
-    private LinkedList<Nodo>[] listaAdy;
-    private Nodo[] mejorEnsayo;
-    private int mejorPeso;
-    int n;
-    int a;
+    public static int[][] matrizDist;
+    public static int nNodos;
+    static Ensayo mejorEnsayo;
+    static int index=0;//Cuantos estados hemos visitado
 
-    private TSP(){
+    public static void main(String[] args){
+        Instant starts = Instant.now();
 
+        String pathName = "input/prueba7.txt";
+        cargar(pathName);
+        System.out.println(Arrays.deepToString(matrizDist));
+
+        TSP();
+        guardar(mejorEnsayo, "result.txt");
+        Instant ends = Instant.now();
+        System.out.println(Duration.between(starts, ends));
     }
 
-    public static TSP getMyTSP(){
-        if(myTSP == null){
-            myTSP = new TSP();
+    private static void guardar(Ensayo est, String nombreGuardar) {
+        File file = new File(nombreGuardar);
+        try (Writer writer = Files.newBufferedWriter(file.toPath())) {
+            if (mejorEnsayo.coste < (Integer.MAX_VALUE - 100)){
+                writer.write("Camino: ");
+                for (int i = 0; i < est.camino.size(); i++) {
+                    writer.write(est.camino.get(i) + ", ");
+                }
+                writer.write("0 \n");
+                writer.write("Coste: "+mejorEnsayo.coste+"\n");
+                writer.write("Ensayos analizados: "+index);
+            }else{
+                writer.write("Insatisfactible \n");
+                writer.write("Ensayos analizados: "+index);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return myTSP;
+
     }
 
-    public void readFile() throws FileNotFoundException {
-        int k = 0;
+    private static void crearPrueba(String path, int numElems){
+        File file = new File(path+"/input"+numElems+".txt");
+        try (Writer writer = Files.newBufferedWriter(file.toPath())) {
+            int numAristas = numElems * numElems;
+            for (int i = 0; i < 5; i++) writer.write("c"+"\n");
+            writer.write(numElems + " "+numAristas+"\n"); // Num vertices, num aristas
+            for (int i = 0; i < numElems; i++)
+                for (int j = 0; j < numElems; j++) {
+                    int peso = ThreadLocalRandom.current().nextInt(1, 100);
+                    if (i==j) writer.write(i+" "+j+" "+0+"\n");
+                    else writer.write(i+" "+j+" "+peso+"\n");
+                }
 
-        File f = new File("lista80.txt");
+        } catch (IOException e) {e.printStackTrace();}
 
-        List<String> lines = new BufferedReader(new FileReader(f)).lines().collect(Collectors.toList()); //Leemos el txt
+    }
 
-        String l = lines.get(5);
-        n = Integer.parseInt(l.split(" ")[0]);
-        a = Integer.parseInt(l.split(" ")[1]);
+    private static void TSP() {
+        PriorityQueue<Ensayo> q = new PriorityQueue<>();
+        int lowerbound;
+        mejorEnsayo = new Ensayo(nNodos, Integer.MAX_VALUE, null, null,0);
 
-        for(LinkedList<Nodo> lista : listaAdy){
-            if(lista == null){
-                lista = new LinkedList<Nodo>();
+        //Respecto al libro hacemos la mitad xk empezamos a explorar por el estado F
+        int[] ensayoAct = new int[nNodos];
+        ensayoAct[0] = 1;
+
+        q.add(new Ensayo(0, 0, ensayoAct, new ArrayList(),0));
+
+        //branch and bound
+        while (!q.isEmpty()) {
+            Ensayo actual = q.remove();
+            if (actual.coste < mejorEnsayo.coste){
+
+                actual.camino.add(actual.id);
+
+                //para cada nodo 'i'...
+                for (int i = 0; i < nNodos; i++) {
+                    //si el id de 'actual' no es el nodo 'i' en el que estamos,
+                    //y existe arista desde el id de 'actual' al nodo 'i' en el que estamos,
+                    //y el nodo 'i' en el que estamos, aun no ha sido visitado en 'actual'.
+                    if (actual.id != i && matrizDist[actual.id][i] < Integer.MAX_VALUE && actual.visitados[i] == 0) {
+                        actual.visitados[i]=1; //1 == visitado || 0 == no visitado
+                        actual.camino.add(i); //añadimos el nodo al recorrido actual
+
+                        index++; //aumentamos en 1 los ensayos creados.
+
+                        //MST con todos los nodos - visitados
+                        int mstV_S = Kruskal.Krusk(matrizDist, actual.visitados, nNodos, actual.id);
+
+                        //a la matrizDistancia acumulada, le sumamos la matrizDistancia del id de 'actual', hasta el nodo 'i' en el que estamos
+                        int acumCamino = actual.acumCamino + matrizDist[actual.id][i];
+                        int hcost = mstV_S;
+                        lowerbound = hcost + Kruskal.minCosteDeA + Kruskal.minCosteDeB + acumCamino;
+
+                        //si hemos recorrido tantos nodos como los que tiene el grafo
+                        if (actual.camino.size() == nNodos) {//+1 por el camino que acabo de borrar
+                            mejorEnsayo.coste = actual.coste; //actualizamos el valor del coste del mejor ensayo
+                            mejorEnsayo.camino = (ArrayList) actual.camino.clone();  //actualizamos el camino del mejor ensayo
+                        }
+                        //si el coste actual es menor que el coste del mejor ensayo actual
+                        else if (lowerbound < mejorEnsayo.coste) {
+                            actual.camino.remove(actual.camino.size()-1); //eliminamos eliminamos el anteultimo nodo, ya que el ultimo es el mismo que el primero
+                            int[] visi = actual.visitados.clone(); //clonamos la lista de visitados
+                            visi[i] = 1; //marcamos como visitado el nodo 'i'
+                            ArrayList tmp = (ArrayList) actual.camino.clone(); //guardamos en tmp una copia del ensayo actual
+                            q.add(new Ensayo(i, lowerbound, visi, tmp , acumCamino)); //añadimos un ensayo con estas caracteristicas guardadas, a la pila 'q' para volver a evaluarlo
+                        }
+                        actual.visitados[i]=0;//marcamos el nodo 'i' como no visitado
+
+                    }
+                }
+                actual.camino.remove(Integer.valueOf(actual.id));
             }
         }
-
-        int i = 6;
-        while(i<lines.size()){
-            String s = lines.get(i);
-            Nodo nodo = new Nodo(Integer.parseInt(s.split(" ")[0]), Integer.parseInt(s.split(" ")[1]), Integer.parseInt(s.split(" ")[2]));
-            listaAdy[Integer.parseInt(s.split(" ")[0])].add(nodo);
-            i++;
-        }
-
-        mejorEnsayo = null;
-        mejorPeso = 999999999;
+        System.out.println(index);
+        System.out.println(mejorEnsayo.coste);
+        System.out.println(mejorEnsayo.camino);
 
     }
 
-    public void iniciarTSP(){
 
-        Nodo[] ensayoAct = null;
-        TSP(0, 0, 0, ensayoAct, 0);
-    }
+    private static void cargar(String pathFile) {
+        String[] split;
+        String line;
+        try {
+            FileInputStream fstream = new FileInputStream(pathFile);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            for (int i = 0; i < 5; i++) br.readLine();
 
-    public void TSP(int nOrigen, int nodosVisit, int ultimoNodo, Nodo[] ensayoAct, int pesoAct) {
+            split = br.readLine().split("\\s");
+            nNodos = Integer.valueOf(split[0]);
+            int numAristas = Integer.valueOf(split[1]);
 
-        if(nodosVisit == n){ //si hemos visitado tantos nodos como nodos totales en el grafo, es una posible solucion
-            Nodo nodoAux = buscarNodoListaAdy(nOrigen, ultimoNodo);
-            if(nodoAux != null){ // si el ultimo nodo visitado, es adyacente del origen, es posible solucion
-                if(pesoAct + nodoAux.getPeso() < mejorPeso){ // si el peso de la posible solucion, es mas optimo que el que teniamos, es mejor solucion.
-                    mejorPeso = pesoAct + nodoAux.getPeso();
-                    mejorEnsayo = ensayoAct;
+            matrizDist = new int[nNodos][nNodos];
+
+            while ((line = br.readLine()) != null) {
+                split = line.split("\\s");
+                int source = Integer.valueOf(split[0]);
+                int destin = Integer.valueOf(split[1]);
+                int value = Integer.valueOf(split[2]);
+                if (value == 0) value = Integer.MAX_VALUE;
+                matrizDist[source][destin] = value;
+                matrizDist[destin][source] = value;
+            }
+            for (int i = 0; i < matrizDist.length; i++) {
+                for (int j = 0; j < matrizDist.length; j++) {
+                    if (matrizDist[i][j]==0) matrizDist[i][j] = Integer.MAX_VALUE;
                 }
             }
-        }
-        else{ //si no es posible solucion
-            for(Nodo auxN : listaAdy[ultimoNodo]){ //iteramos por todos los nodos adyacentes al ultimo
-                if(!auxN.visitado() && pesoAct + auxN.getPeso() < mejorPeso){
-                    auxN.setVisitado(); //seteamos visitado el nodo actual
-                    ensayoAct[nodosVisit] = auxN; //añadimos el nodo actual al ensayo
-                    TSP(0, nodosVisit+1, auxN.getDestino(), ensayoAct, pesoAct + auxN.getPeso());
-                    auxN.setNoVisitado(); //revertimos el cambio para que en vez de auxN, sea auxN + 1 el siguiente nodo seleccionado, y estudiamos lo que ocurre
-                }
-            }
-        }
 
-    }
-
-    public Nodo buscarNodoListaAdy(int n1, int n2){ //buscar si n2 es adyacente de n1.
-        boolean flag = false;
-        Nodo auxN = null;
-        for(Nodo nodo : listaAdy[n1]){
-            if(!flag){
-                if(nodo.getDestino() == n2){
-                    flag = true;
-                    auxN = nodo;
-                }
-            }
-        }
-        if(flag) {
-            return auxN;
-        }
-        else{
-            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
