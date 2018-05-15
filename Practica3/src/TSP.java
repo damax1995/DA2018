@@ -16,23 +16,24 @@ public class TSP {
     public static void main(String[] args){
         Instant starts = Instant.now();
 
-        String pathName = "input/prueba7.txt";
+        String pathName = "prueba7.txt";
         cargar(pathName);
-        System.out.println(Arrays.deepToString(matrizDist));
 
         TSP();
-        guardar(mejorEnsayo, "result.txt");
+        guardar(mejorEnsayo, "resultado.txt");
         Instant ends = Instant.now();
         System.out.println(Duration.between(starts, ends));
     }
 
-    private static void guardar(Ensayo est, String nombreGuardar) {
-        File file = new File(nombreGuardar);
-        try (Writer writer = Files.newBufferedWriter(file.toPath())) {
+
+
+    private static void guardar(Ensayo ensayo, String nombre) {
+        File logfile = new File(nombre);
+        try (Writer writer = Files.newBufferedWriter(logfile.toPath())) {
+            System.out.println("TU FICHERO 'resultado.txt' ESTARÁ EN: "+logfile.getCanonicalPath());
             if (mejorEnsayo.coste < (Integer.MAX_VALUE - 100)){
-                writer.write("Camino: ");
-                for (int i = 0; i < est.camino.size(); i++) {
-                    writer.write(est.camino.get(i) + ", ");
+                for (int i = 0; i < ensayo.camino.size(); i++) {
+                    writer.write(ensayo.camino.get(i) + "\n");
                 }
                 writer.write("0 \n");
                 writer.write("Coste: "+mejorEnsayo.coste+"\n");
@@ -48,80 +49,77 @@ public class TSP {
 
     }
 
-    private static void crearPrueba(String path, int numElems){
-        File file = new File(path+"/input"+numElems+".txt");
-        try (Writer writer = Files.newBufferedWriter(file.toPath())) {
-            int numAristas = numElems * numElems;
-            for (int i = 0; i < 5; i++) writer.write("c"+"\n");
-            writer.write(numElems + " "+numAristas+"\n"); // Num vertices, num aristas
-            for (int i = 0; i < numElems; i++)
-                for (int j = 0; j < numElems; j++) {
-                    int peso = ThreadLocalRandom.current().nextInt(1, 100);
-                    if (i==j) writer.write(i+" "+j+" "+0+"\n");
-                    else writer.write(i+" "+j+" "+peso+"\n");
-                }
-
-        } catch (IOException e) {e.printStackTrace();}
-
-    }
-
     private static void TSP() {
-        PriorityQueue<Ensayo> q = new PriorityQueue<>();
+        PriorityQueue<Ensayo> cola = new PriorityQueue<>();
         int lowerbound;
         mejorEnsayo = new Ensayo(nNodos, Integer.MAX_VALUE, null, null,0);
 
-        //Respecto al libro hacemos la mitad xk empezamos a explorar por el estado F
         int[] ensayoAct = new int[nNodos];
         ensayoAct[0] = 1;
 
-        q.add(new Ensayo(0, 0, ensayoAct, new ArrayList(),0));
+        cola.add(new Ensayo(0, 0, ensayoAct, new ArrayList(),0));
 
         //branch and bound
-        while (!q.isEmpty()) {
-            Ensayo actual = q.remove();
+        //mientras queden ensayos posiblen en la cola...
+        while (!cola.isEmpty()) {
+            //obtenemos el primer ensayo
+            Ensayo actual = cola.remove();
+            System.out.println(actual.camino);
+            System.out.println("lowerBound: "+actual.coste);
+            //si el coste del ensayo a tener en cuenta, ya es peor que el mejor que tenemos, parar.
             if (actual.coste < mejorEnsayo.coste){
 
-                actual.camino.add(actual.id);
+                actual.camino.add(actual.destino);
+                System.out.println("se va a añadir: "+actual.destino);
+                System.out.println("_______");
 
                 //para cada nodo 'i'...
                 for (int i = 0; i < nNodos; i++) {
-                    //si el id de 'actual' no es el nodo 'i' en el que estamos,
-                    //y existe arista desde el id de 'actual' al nodo 'i' en el que estamos,
+                    //si el destino de 'actual' no es el nodo 'i' en el que estamos,
+                    //y existe arista desde el destino de 'actual' al nodo 'i' en el que estamos,
                     //y el nodo 'i' en el que estamos, aun no ha sido visitado en 'actual'.
-                    if (actual.id != i && matrizDist[actual.id][i] < Integer.MAX_VALUE && actual.visitados[i] == 0) {
+                    if (actual.destino != i && matrizDist[actual.destino][i] < Integer.MAX_VALUE && actual.visitados[i] == 0) {
+                        System.out.println("Entro con: "+i);
                         actual.visitados[i]=1; //1 == visitado || 0 == no visitado
+                        System.out.println(actual.camino);
                         actual.camino.add(i); //añadimos el nodo al recorrido actual
+                        System.out.println(actual.camino);
 
                         index++; //aumentamos en 1 los ensayos creados.
 
-                        //MST con todos los nodos - visitados
-                        int mstV_S = Kruskal.Krusk(matrizDist, actual.visitados, nNodos, actual.id);
-
-                        //a la matrizDistancia acumulada, le sumamos la matrizDistancia del id de 'actual', hasta el nodo 'i' en el que estamos
-                        int acumCamino = actual.acumCamino + matrizDist[actual.id][i];
-                        int hcost = mstV_S;
-                        lowerbound = hcost + Kruskal.minCosteDeA + Kruskal.minCosteDeB + acumCamino;
+                        //MST con los nodos no visitados
+                        int mstV_S = Kruskal.Krusk(matrizDist, actual.visitados, nNodos, actual.destino);
+                        //al peso del camino acumulado, le sumamos el peso del destino de 'actual', hasta el nodo 'i' en el que estamos
+                        System.out.println(actual.acumCamino);
+                        int acumCamino = actual.acumCamino + matrizDist[actual.destino][i];
+                        //actual.acumCamino = acumCamino;
+                        System.out.println( matrizDist[actual.destino][i]+"!!");
+                        System.out.println("Peso acumulado en el camino: "+acumCamino);
+                        lowerbound = mstV_S + Kruskal.minCosteDeA + Kruskal.minCosteDeB + acumCamino;
 
                         //si hemos recorrido tantos nodos como los que tiene el grafo
-                        if (actual.camino.size() == nNodos) {//+1 por el camino que acabo de borrar
-                            mejorEnsayo.coste = actual.coste; //actualizamos el valor del coste del mejor ensayo
+                        if (actual.camino.size() == nNodos) {
+                            mejorEnsayo.coste = actual.coste;
                             mejorEnsayo.camino = (ArrayList) actual.camino.clone();  //actualizamos el camino del mejor ensayo
+                            System.out.println("POSIBLE SOLUCION!");
+                            System.out.println(mejorEnsayo.camino);
+                            System.out.println("peso: "+mejorEnsayo.coste);
                         }
-                        //si el coste actual es menor que el coste del mejor ensayo actual
+                        //si el coste minimo estimado del ensayo actual, es menor que el del mejor ensayo
                         else if (lowerbound < mejorEnsayo.coste) {
-                            actual.camino.remove(actual.camino.size()-1); //eliminamos eliminamos el anteultimo nodo, ya que el ultimo es el mismo que el primero
+                            actual.camino.remove(actual.camino.size()-1); //eliminamos el anteultimo nodo para seguir con el siguiente nodo
                             int[] visi = actual.visitados.clone(); //clonamos la lista de visitados
-                            visi[i] = 1; //marcamos como visitado el nodo 'i'
                             ArrayList tmp = (ArrayList) actual.camino.clone(); //guardamos en tmp una copia del ensayo actual
-                            q.add(new Ensayo(i, lowerbound, visi, tmp , acumCamino)); //añadimos un ensayo con estas caracteristicas guardadas, a la pila 'q' para volver a evaluarlo
+                            cola.add(new Ensayo(i, lowerbound, visi, tmp , acumCamino)); //añadimos un ensayo con estas caracteristicas guardadas, a la 'cola' para volver a evaluarlo
                         }
                         actual.visitados[i]=0;//marcamos el nodo 'i' como no visitado
 
                     }
                 }
-                actual.camino.remove(Integer.valueOf(actual.id));
+                actual.camino.remove(Integer.valueOf(actual.destino));
             }
         }
+        System.out.println("_____________________");
         System.out.println(index);
         System.out.println(mejorEnsayo.coste);
         System.out.println(mejorEnsayo.camino);
