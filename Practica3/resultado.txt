@@ -19,5 +19,5 @@
 18
 19
 0 
-Coste: 200
+Coste: 0
 Ensayos analizados: 37

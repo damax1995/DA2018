@@ -2,8 +2,11 @@ import java.util.*;
 
 public class Kruskal {
     Map<Integer, Integer> parent = new HashMap<>();
-    public static int minCosteDeA=Integer.MAX_VALUE;
-    public static int minCosteDeB=Integer.MAX_VALUE;
+    public static int minCosteDeA= Integer.MAX_VALUE;
+    public static int minCosteDeB= Integer.MAX_VALUE;
+    static boolean flag = false;
+    static boolean flag2 = false;
+
 
     // perform MakeSet operation
     public void makeSet(int N) {
@@ -66,12 +69,68 @@ public class Kruskal {
         return MST;
     }
 
+    public static void resetFlags(){
+        flag = false;
+        flag2 = false;
+    }
+
     public static int Krusk(int[][] cost, int[] visited, int numOfCities, int B) {
         List<Edge> edges = new ArrayList<>(1);
         for(int i = 0; i < numOfCities; i++){
             for(int j = i + 1; j < numOfCities; j++) {
                 if(visited[i] == 0 && visited[j] == 0){
                     if (cost[i][j]<Integer.MAX_VALUE){
+                        if (cost[0][j] < minCosteDeA && visited[j]==0){
+                            minCosteDeA = cost[0][j];
+                            flag = true;
+                        }
+                        if (cost[B][j] < minCosteDeB && visited[j]==0){
+                            minCosteDeB = cost[B][j];
+                            flag2 = true;
+                        }
+                        edges.add(new Edge(i, j, cost[i][j]));
+                    }
+                }
+            }
+        }
+
+        if (edges.size() == 0) return 0;
+        if (edges.size() == 1) return edges.get(0).weight;
+        // sort edges by increasing weight
+        Collections.sort(edges, (a, b) -> a.weight - b.weight);
+
+        //System.out.println(Arrays.toString(edges.toArray()));
+        int tempNum = numOfCities;
+        for(int i = 0; i < tempNum; i++){
+            if(visited[i] > 0)
+                numOfCities--;
+        }
+        //System.out.println(numOfCities);
+        // construct graph
+        List<Edge> e = KruskalAlgo(edges, tempNum, numOfCities);
+
+        int peso = 0;
+        for (Edge edge : e) {
+            peso += edge.weight;
+        }
+
+        /*if(!flag){
+            minCosteDeA = -1;
+        }
+        if(!flag2){
+            minCosteDeB = -1;
+        }*/
+
+        return peso;
+    }
+
+
+    /*public static int Krusk(int[][] cost, int[] visited, int numOfCities, int B) {
+        List<Edge> edges = new ArrayList<>(1);
+        for(int i = 0; i < numOfCities; i++){
+            for(int j = i + 1; j < numOfCities; j++) {
+                if(visited[i] == 0 && visited[j] == 0){
+                    if (cost[i][j] != -1){
                         if (cost[0][j] < minCosteDeA && visited[j]==0){
                             minCosteDeA = cost[0][j];
                         }
@@ -103,7 +162,9 @@ public class Kruskal {
             peso += edge.weight;
         }
         return peso;
-    }
+    }*/
+
+
 
     // Data structure to store graph edges
     static class Edge {
