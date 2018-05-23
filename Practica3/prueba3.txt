@@ -3,7 +3,7 @@ cGrafo completo de 10 nodos
 c
 c
 c
-10 46
+10 45
 0 1 1
 0 2 2
 0 3 3

@@ -1,41 +1,39 @@
 public class Nodo {
 
-    //EN REALIDAD MAS QUE 'NODO', CREO QUE ESTA CLASE DEBERIA LLAMARSE 'ARISTA' o algo del estilo.
-
-    private int origen;
-    private int destino;
-    private int peso;
-    private Nodo next;
+    private int valor;
+    private float peso;
     private boolean visitado;
+    private int padre; //Lo guardo como integer, ya que me refiero al valor del nodoPadre, ya que con nodos fallaban las referencias.
+    private int rank;
+    private int index;
+    private int lowlink;
 
-    public Nodo(int o, int d, int p){
-        origen = o;
-        destino = d;
-        peso = p;
+    public Nodo(int v){
+        valor = v;
         visitado = false;
+        peso = 0;
+        index = -1;
+        lowlink = -1;
     }
 
-    public int getOrigen() {
-        return origen;
+    public Nodo(int v, float p){
+        valor = v;
+        peso = p;
     }
 
-    public void setOrigen(int origen) {
-        this.origen = origen;
+    public int getValor(){
+        return valor;
     }
 
-    public int getDestino(){
-        return destino;
-    }
-
-    public int getPeso() {
+    public float getPeso() {
         return peso;
     }
 
-    public void setDestino(int v){
-        destino = v;
+    public void setValor(int v){
+        valor = v;
     }
 
-    public void setPeso(int p){
+    public void setPeso(float p){
         peso = p;
     }
 
@@ -51,7 +49,40 @@ public class Nodo {
         visitado = false;
     }
 
-    public void setNext(Nodo n){
-        next = n;
+    public void setPadre(Integer n){
+        this.padre = n;
     }
+
+    public void setRank(int pRank){
+        rank = pRank;
+    }
+
+    public void aumRank(){
+        rank++;
+    }
+
+    public int getRank(){
+        return rank;
+    }
+
+    public int getPadre(){
+        return padre;
+    }
+
+    public void setIndex(int i){
+        index = i;
+    }
+
+    public int getIndex(){
+        return index;
+    }
+
+    public int getLowlink(){
+        return lowlink;
+    }
+
+    public void setLowlink(int i){
+        lowlink = i;
+    }
+
 }
